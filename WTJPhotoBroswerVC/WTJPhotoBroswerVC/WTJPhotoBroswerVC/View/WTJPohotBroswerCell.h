@@ -11,7 +11,7 @@
 #define WTJPhotoBroswerCellKey @"WTJPhotoBroswerCellKey"
 
 @interface WTJPohotBroswerCell : UICollectionViewCell
-
+@property (weak,nonatomic) PhotoItemView *currentItemView;
 /** 单击 */
 @property (nonatomic,copy) void (^ItemViewSingleTapBlock)();
 

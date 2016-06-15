@@ -10,6 +10,11 @@
 #import "WTJPohotBroswerCell.h"
 #import "WTJTopBarView.h"
 
+#define kAPPWidth [UIScreen mainScreen].bounds.size.width
+#define kAppHeight [UIScreen mainScreen].bounds.size.height
+
+//是否支持横屏
+#define shouldSupportLandscape YES
 // browser消失的动画时长
 #define kPhotoBrowserHideDuration 0.4f
 //topBar的高度
@@ -58,6 +63,20 @@
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
+
+-(void)viewWillLayoutSubviews{
+    
+    [super viewWillLayoutSubviews];
+    CGRect rect = self.view.bounds;
+    
+    [_flowLayout setItemSize:CGSizeMake(rect.size.width,rect.size.height)];
+    
+    _mainView.bounds = rect;
+    _mainView.center = CGPointMake(kAPPWidth *0.5, kAppHeight *0.5);
+    
+    [_mainView setNeedsLayout];
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -112,8 +131,8 @@
 //dismiss
 
 -(void)dismiss{
-
-
+    
+    
     [self dismissViewControllerAnimated:YES completion:nil];
     
 }
@@ -136,12 +155,12 @@
 #pragma mark - UICollectionViewDelegate
 
 -(void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath{
-
+    
     NSIndexPath *path = collectionView.indexPathsForVisibleItems.lastObject;
     
     //改变当前索引
     self.topBarView.currentPhotoIndex = path.item;
-  
+    
 }
 
 #pragma mark - setter and getter
@@ -153,7 +172,6 @@
         _flowLayout = [[UICollectionViewFlowLayout alloc]init];
         _flowLayout.minimumLineSpacing = 0;
         _flowLayout.minimumInteritemSpacing = 0;
-        [_flowLayout setItemSize:CGSizeMake(self.view.bounds.size.width,self.view.bounds.size.height)];
         _flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     }
     
@@ -185,7 +203,7 @@
     if (!_topBarView) {
         
         __weak typeof(self) weakSelf=self;
-
+        
         _topBarView = [[WTJTopBarView alloc]initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, kTopBarViewHeight)];
         _topBarView.photos =_photoModels;
         _topBarView.currentPhotoIndex = _currentImageIndex;
@@ -212,6 +230,27 @@
 
 -(void)setPhotoModels:(NSArray *)photoModels{
     _photoModels = photoModels;
+    
+}
 
+#pragma mark 横竖屏设置
+- (BOOL)shouldAutorotate
+{
+    return shouldSupportLandscape;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    if (shouldSupportLandscape) {
+        return UIInterfaceOrientationMaskAll;
+    } else{
+        return UIInterfaceOrientationMaskPortrait;
+    }
+    
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+    return YES;
 }
 @end

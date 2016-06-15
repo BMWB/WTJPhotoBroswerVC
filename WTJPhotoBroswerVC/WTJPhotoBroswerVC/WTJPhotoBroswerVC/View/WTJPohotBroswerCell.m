@@ -9,7 +9,7 @@
 #import "WTJPohotBroswerCell.h"
 #import "UIView+Extend.h"
 @interface WTJPohotBroswerCell()
-@property (weak,nonatomic) PhotoItemView *currentItemView;
+
 @end
 
 @implementation WTJPohotBroswerCell

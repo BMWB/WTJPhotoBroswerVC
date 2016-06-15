@@ -52,15 +52,6 @@
 /** 旋转手势 */
 @property (nonatomic,strong) UIRotationGestureRecognizer *rotaGesture;
 
-
-
-
-
-
-
-
-
-
 /** 双击放大 */
 @property (nonatomic,assign) BOOL isDoubleClickZoom;
 
@@ -70,6 +61,12 @@
 
 @implementation PhotoItemView
 
+-(void)layoutSubviews{
+
+    [super layoutSubviews];
+    
+    
+}
 
 -(void)awakeFromNib{
     
