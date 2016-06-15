@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "PhotoModel.h"
+
 @interface WTJPhotoBrosweerVC : UIViewController
+
 +(void)show:(UIViewController *)handleVC Index:(NSUInteger)index photoModelBlock:(NSArray *(^)())photoModelBlock;
 @end

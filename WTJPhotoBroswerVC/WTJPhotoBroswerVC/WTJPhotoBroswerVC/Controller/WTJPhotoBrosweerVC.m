@@ -9,33 +9,37 @@
 #import "WTJPhotoBrosweerVC.h"
 #import "WTJPohotBroswerCell.h"
 #import "WTJTopBarView.h"
+
+// browser消失的动画时长
+#define kPhotoBrowserHideDuration 0.4f
+//topBar的高度
+#define kTopBarViewHeight  60
+
 @interface WTJPhotoBrosweerVC ()<UICollectionViewDelegate,UICollectionViewDataSource>
 /** 外部操作控制器 */
 @property (nonatomic,weak) UIViewController *handleVC;
 /** 相册数组 */
 @property (nonatomic,strong) NSArray *photoModels;
-// 显示图片的collectionView
+/** collectionView */
 @property (nonatomic, strong) UICollectionView *mainView;
 @property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
+/** 顶部工具条 */
 @property (strong, nonatomic) WTJTopBarView *topBarView;
+/** 当前索引 */
+@property (assign,nonatomic) NSUInteger currentImageIndex;
 @end
 
 @implementation WTJPhotoBrosweerVC
 +(void)show:(UIViewController *)handleVC Index:(NSUInteger)index photoModelBlock:(NSArray *(^)())photoModelBlock{
-
+    
     //取出相册数组
     NSArray *photoModels = photoModelBlock();
     
     WTJPhotoBrosweerVC *pbVC = [[self alloc] init];
     pbVC.photoModels = photoModels;
     pbVC.handleVC = handleVC;
+    pbVC.currentImageIndex = index;
     [pbVC show];
-}
-
--(void)show{
-    
-    [self.handleVC presentViewController:self animated:YES completion:nil];
-    
 }
 
 #pragma mark - lefe cycle
@@ -69,8 +73,48 @@
 }
 
 #pragma mark -priteMth
+//单击
 -(void)singleTap{
+    
+    __weak typeof(self) weakSelf=self;
+    CGFloat topBarY;
+    
+    topBarY =  (weakSelf.topBarView.frame.origin.y == 0)? (-kTopBarViewHeight):0;
+    
+    [UIView animateWithDuration:kPhotoBrowserHideDuration animations:^{
+        
+        weakSelf.topBarView.frame= CGRectMake(weakSelf.topBarView.frame.origin.x, topBarY, weakSelf.topBarView.frame.size.width, weakSelf.topBarView.frame.size.height);
+    }];
+}
 
+//当前cell
+-(void)currentPhotoBroswerCell:(WTJPohotBroswerCell *)cell AtIndexPath:(NSIndexPath *)indexPath{
+    __weak typeof(self) weakSelf=self;
+    
+    PhotoModel *pbModel = self.photoModels[indexPath.row];
+    cell.photoModel = pbModel;
+    
+    cell.ItemViewSingleTapBlock = ^(){
+        
+        [weakSelf singleTap];
+        
+    };
+    
+}
+
+//show
+-(void)show{
+    
+    [self.handleVC presentViewController:self animated:YES completion:nil];
+    
+}
+
+//dismiss
+
+-(void)dismiss{
+
+
+    [self dismissViewControllerAnimated:YES completion:nil];
     
 }
 
@@ -82,25 +126,23 @@
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
-
-    WTJPohotBroswerCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:WTJPhotoBroswerCellKey forIndexPath:indexPath];
-    [cell.currentItemView reset];
-    PhotoModel *pbModel = self.photoModels[indexPath.row];
-    cell.currentItemView.photoModel = pbModel;
-    cell.ItemViewSingleTapBlock = ^(){
     
-        NSLog(@"--点击－－");
-    };
+    WTJPohotBroswerCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:WTJPhotoBroswerCellKey forIndexPath:indexPath];
+    [self currentPhotoBroswerCell:cell AtIndexPath:indexPath];
     
     return cell;
 }
-    
+
 #pragma mark - UICollectionViewDelegate
 
-//-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-//
-//    NSLog(@"%s",__FUNCTION__);
-//}
+-(void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath{
+
+    NSIndexPath *path = collectionView.indexPathsForVisibleItems.lastObject;
+    
+    //改变当前索引
+    self.topBarView.currentPhotoIndex = path.item;
+  
+}
 
 #pragma mark - setter and getter
 
@@ -131,16 +173,37 @@
         [_mainView registerClass:[WTJPohotBroswerCell class] forCellWithReuseIdentifier:WTJPhotoBroswerCellKey];
         _mainView.dataSource = self;
         _mainView.delegate = self;
+        
+        [_mainView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_currentImageIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
     }
     
     return _mainView;
 }
 
 -(WTJTopBarView *)topBarView{
-
-
+    
     if (!_topBarView) {
-        _topBarView = [[WTJTopBarView alloc]initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 60)];
+        
+        __weak typeof(self) weakSelf=self;
+
+        _topBarView = [[WTJTopBarView alloc]initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, kTopBarViewHeight)];
+        _topBarView.photos =_photoModels;
+        _topBarView.currentPhotoIndex = _currentImageIndex;
+        _topBarView.WTJTopBarViewBlock = ^(WTJTopBarType type){
+            
+            switch (type) {
+                case SaveImage:{
+                    
+                }break;
+                    
+                case BackMth:{
+                    [weakSelf dismiss];
+                }break;
+                default:
+                    break;
+            }
+            
+        };
         
     }
     
@@ -149,6 +212,6 @@
 
 -(void)setPhotoModels:(NSArray *)photoModels{
     _photoModels = photoModels;
-    [self.mainView reloadData];
+
 }
 @end

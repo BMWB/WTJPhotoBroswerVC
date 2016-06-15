@@ -22,7 +22,8 @@
 
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     __weak typeof(self) weakSelf=self;
-    [WTJPhotoBrosweerVC show:self Index:0 photoModelBlock:^NSArray *{
+    
+    [WTJPhotoBrosweerVC show:self Index:3 photoModelBlock:^NSArray *{
         NSArray *localImages = weakSelf.images;
         
         NSMutableArray *modelsM = [NSMutableArray arrayWithCapacity:localImages.count];

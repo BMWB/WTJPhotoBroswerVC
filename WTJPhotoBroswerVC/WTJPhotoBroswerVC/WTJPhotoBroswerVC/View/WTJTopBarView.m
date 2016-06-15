@@ -32,7 +32,6 @@
             _topBarLabel.backgroundColor = [UIColor clearColor];
             _topBarLabel.textColor = [UIColor whiteColor];
             _topBarLabel.textAlignment = NSTextAlignmentCenter;
-            _topBarLabel.text = @"5/10";
             _topBarLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
             [self addSubview:_topBarLabel];
         }
@@ -60,13 +59,30 @@
 
 -(void)backMth{
     
+    if (self.WTJTopBarViewBlock) {
+        self.WTJTopBarViewBlock(BackMth);
+    }
+    
     NSLog(@"后退");
 }
 
 
 -(void)saveImage{
     
+    if (self.WTJTopBarViewBlock) {
+        self.WTJTopBarViewBlock(SaveImage);
+    }
     NSLog(@"保存");
+    
+}
+
+-(void)setCurrentPhotoIndex:(NSUInteger)currentPhotoIndex{
+
+    _currentPhotoIndex = currentPhotoIndex;
+    
+    // 更新页码
+    _topBarLabel.text = [NSString stringWithFormat:@"%d / %d", (int)_currentPhotoIndex + 1, (int)_photos.count];
+    
     
 }
 @end

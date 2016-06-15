@@ -7,10 +7,9 @@
 //
 
 #import "WTJPohotBroswerCell.h"
-
 #import "UIView+Extend.h"
 @interface WTJPohotBroswerCell()
-
+@property (weak,nonatomic) PhotoItemView *currentItemView;
 @end
 
 @implementation WTJPohotBroswerCell
@@ -24,6 +23,7 @@
             PhotoItemView *photoItemView = [PhotoItemView viewFromXIB];
             photoItemView.frame = self.contentView.bounds;
              __weak typeof(photoItemView) weakphotoItemView=photoItemView;
+            
             photoItemView.ItemViewSingleTapBlock= ^(){
                 
                 [weakphotoItemView handleBotoomView];
@@ -39,5 +39,12 @@
         
     }
     return self;
+}
+
+-(void)setPhotoModel:(PhotoModel *)photoModel{
+
+    _photoModel = photoModel;
+    [_currentItemView reset];
+    _currentItemView.photoModel = _photoModel;
 }
 @end
