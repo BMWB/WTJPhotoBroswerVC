@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "WTJPhotoBroswerVC/Controller/WTJPhotoBrosweerVC.h"
+#import "WTJPhotoBrosweerVC.h"
 @interface ViewController ()
 
 @property (nonatomic,strong) NSArray *images;
@@ -29,8 +29,7 @@
         NSMutableArray *modelsM = [NSMutableArray arrayWithCapacity:localImages.count];
         for (NSUInteger i = 0; i< localImages.count; i++) {
             
-            PhotoModel *pbModel=[[PhotoModel alloc] init];
-            pbModel.mid = i + 1;
+            WTJPhotoModel *pbModel=[[WTJPhotoModel alloc] init];
             pbModel.title = [NSString stringWithFormat:@"这是标题%@",@(i+1)];
             pbModel.desc = [NSString stringWithFormat:@"我是一段很长的描述文字我是一段很长的描述文字我是一段很长的描述文字我是一段很长的描述文字我是一段很长的描述文字我是一段很长的描述文字%@",@(i+1)];
             pbModel.image = localImages[i];
